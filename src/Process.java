@@ -7,7 +7,7 @@ public class Process {
 
     PCB pcb;
 
-    int timeUnit;
+    int timeUnit = 0;
     int currentInstruction;
 
     Process(PCB pcb, String numInstruct, String ioRequestAtInstruction, String ioDevicesRequested) {
@@ -21,6 +21,7 @@ public class Process {
 
     void readyProcess() {
         this.pcb.state = STATE.READY;
+
         // check if IO requested
         if (!ioRequestAtInstruction.equals("[]")) {
             ioRequest = true;
@@ -29,7 +30,17 @@ public class Process {
 
     public void execute() {
         pcb.state = STATE.RUNNING;
-        timeUnit = 0;
+
+        // Each instruction (every two time units for assignment check guidelines)
+        for (int i = 0 ; i <= Integer.parseInt(numInstruct) ; i++) {
+            // Check for IO Request
+            if (ioRequest) {
+                // Implementation for IO
+
+            } else {
+                // No IO then keep going with instructions till done. then go onto next process.
+            }
+        }
 
 
 

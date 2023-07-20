@@ -1,18 +1,23 @@
-import java.io.*;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Driver {
 
     static File file = new File("input.txt");
 
-    static ArrayList<Process> processes = new ArrayList<>();
+    static Queue<Process> readyQueue = new LinkedList<>();
+    static Queue<Process> waitingQueue = new LinkedList<>();
 
     public static void main(String[] args) throws IOException {
         // First we need to read the file given (Format is standard)
         readFile();
 
-        for (Process process : processes) {
-
+        for (Process process : readyQueue) {
+            process.execute();
         }
     }
 
@@ -20,7 +25,7 @@ public class Driver {
         BufferedReader reader;
 
         try {
-            reader = new BufferedReader(new FileReader("input.txt"));
+            reader = new BufferedReader(new FileReader(file));
             reader.readLine();
             String line = reader.readLine();
 
@@ -37,7 +42,7 @@ public class Driver {
                 PCB pcb = new PCB(pid, 0);
                 // Create the process
                 Process p = new Process(pcb, numInstruct, ioRequestAtInstruction, ioDevicesRequested);
-                processes.add(p);
+                readyQueue.add(p);
 
                 System.out.println(p.details());
 
