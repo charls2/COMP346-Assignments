@@ -17,12 +17,28 @@ public class IODevice {
         for (int i = 0 ; i < timePerIO ; i++) {
             System.out.println("\nTIME UNIT: " + CPU.getTimeUnit());
 
+            System.out.println("PROCESS ID: " + waitPCB.getPid() + ", IO Request at Instruction: " + waitPCB.getPcounter());
+
             CPU.setTimeUnit(CPU.getTimeUnit() + 1); // Five time units to be fulfilled
             System.out.println("IO REQUEST... " + waitPCB.getPcounter());
 
+            System.out.print("READY QUEUE: [");
+            for (PCB p : CPU.readyQueue) {
+                System.out.print("PID: " + p.getPid() + " ");
+            }
+            System.out.println("]");
+            System.out.print("WAIT QUEUE IO1: [");
+            for (PCB p : CPU.IO1.getWaitQueue()) {
+                System.out.print("PID: " + p.getPid() + " ");
+            }
+            System.out.println("]");
+            System.out.print("WAIT QUEUE IO2: [");
+            for (PCB p : CPU.IO2.getWaitQueue()) {
+                System.out.print("PID: " + p.getPid() + " ");
+            }
+            System.out.println("]");
         }
-        System.out.println("IO REQUEST FULFILLED INSTRUCT: " + waitPCB.getPcounter());
-        CPU.readyQueue.add(waitPCB);
+        System.out.println("\nIO REQUEST FULFILLED @ INSTRUCTION #: " + waitPCB.getPcounter());
         waitPCB.setState(STATE.READY);
     }
 

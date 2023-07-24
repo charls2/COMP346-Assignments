@@ -34,33 +34,48 @@ public class Process {
         }
     }
 
-    public void executeInstruction() {
-
+    public void execute() {
         this.pcb.setState(STATE.RUNNING);
         // two time units per process
         for (int i = 0 ; i < timePerProcess ; i++) {
             System.out.println("\nTIME UNIT: " + CPU.getTimeUnit());
 
             if (currentInstruction == Integer.parseInt(numInstruct) + 1) {
-                System.out.println("PROCESS ID: " + this.pid + " FINISHED EXECUTING ALL INSTRUCTIONS");
+                System.out.println("PROCESS ID: " + pcb.getPid() + " FINISHED EXECUTING ALL INSTRUCTIONS");
                 pcb.setState(STATE.TERMINATED);
                 CPU.setTimeUnit(CPU.getTimeUnit() + 1);
-                CPU.readyQueue.remove();
+                if (!CPU.readyQueue.isEmpty()) {
+                    CPU.readyQueue.remove();
+                }
                 break;
             }
 
             checkIO();
-            //System.out.println("PROCESS ID: " + this.pid + ", IO Request at Instruction: " + currentInstruction);
-            //return;
 
-//        }
-
-            CPU.readyQueue.add(pcb);
             System.out.println("PROCESS ID: " + this.pid + ", Current Instruction: " + currentInstruction);
+            System.out.print("READY QUEUE: [");
+            for (PCB p : CPU.readyQueue) {
+                System.out.print("PID: " + p.getPid() + " ");
+            }
+            System.out.println("]");
+            System.out.print("WAIT QUEUE IO1: [");
+            for (PCB p : CPU.IO1.getWaitQueue()) {
+                System.out.print("PID: " + p.getPid() + " ");
+            }
+            System.out.println("]");
+            System.out.print("WAIT QUEUE IO2: [");
+            for (PCB p : CPU.IO2.getWaitQueue()) {
+                System.out.print("PID: " + p.getPid() + " ");
+            }
+            System.out.println("]");
+
             CPU.setTimeUnit(CPU.getTimeUnit() + 1);
             pcb.setPcounter(currentInstruction);
             currentInstruction++;
 
+            if (i == 1) {
+                CPU.readyQueue.add(getPCB());
+            }
         }
         this.pcb.setState(STATE.READY);
     }
@@ -85,27 +100,17 @@ public class Process {
                     pcb.setPcounter(currentInstruction);
                     pcb.setState(STATE.WAITING);
 
-                    //CPU.waitingQueue.add(CPU.currentPCB);
-
-
                     // Check which device is wanted and initiate it
                     if (Integer.parseInt(split2[i]) == 1) {
-                        //CPU.IO1 = new IODevice(this);
                         CPU.IO1.getWaitQueue().add(pcb);
-                        //return IO1 = new IODevice();
                     } else {
-                        //CPU.IO2 = new IODevice(this);
                         CPU.IO2.getWaitQueue().add(pcb);
-                        //return IO2 = new IODevice();
                     }
                     break;
                 }
             }
             // break out of loop
-
-
         }
-        //return null;
     }
 
     public void setCurrentInstruction(int currentInstruction) {

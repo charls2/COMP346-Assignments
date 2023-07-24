@@ -10,7 +10,6 @@ public class CPU {
     static File file = new File("input.txt");
 
     static Queue<PCB> readyQueue = new LinkedList<>();
-    //static Queue<PCB> waitingQueue = new LinkedList<>();
     static PCB currentPCB;
 
     static IODevice IO1 = new IODevice();
@@ -86,7 +85,7 @@ public class CPU {
             currentPCB = readyQueue.poll(); // retrieve and remove head of queue
             if (currentPCB != null) {
 
-                currentPCB.getProcess().executeInstruction();
+                currentPCB.getProcess().execute();
                 // Switch process
 
 
