@@ -1,3 +1,5 @@
+package A1;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -58,12 +60,6 @@ public class CPU {
     }
 
     public static void begin() {
-
-        // Two time units per process (so two instructions max)
-
-        // take first process in readyqueue and execute 2 timeUnits
-
-
         // Move Processes from readyQueue to running state
         while (!readyQueue.isEmpty() || !IO1.getWaitQueue().isEmpty()
                 || !IO2.getWaitQueue().isEmpty()) {
@@ -84,18 +80,31 @@ public class CPU {
             // READY QUEUE
             currentPCB = readyQueue.poll(); // retrieve and remove head of queue
             if (currentPCB != null) {
-
                 currentPCB.getProcess().execute();
                 // Switch process
-
-
             }
-
-            //timeUnit++;
         }
 
         System.out.println("\nTERMINATING SYSTEM");
         System.exit(0);
+    }
+
+    public static void print() {
+        System.out.print("READY QUEUE: [");
+        for (PCB p : readyQueue) {
+            System.out.print("PID: " + p.getPid() + " ");
+        }
+        System.out.println("]");
+        System.out.print("WAIT QUEUE IO1: [");
+        for (PCB p : IO1.getWaitQueue()) {
+            System.out.print("PID: " + p.getPid() + " ");
+        }
+        System.out.println("]");
+        System.out.print("WAIT QUEUE IO2: [");
+        for (PCB p : IO2.getWaitQueue()) {
+            System.out.print("PID: " + p.getPid() + " ");
+        }
+        System.out.println("]");
     }
 
     public static int getTimeUnit() {

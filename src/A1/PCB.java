@@ -1,3 +1,5 @@
+package A1;
+
 import java.util.ArrayList;
 
 public class PCB {
@@ -10,13 +12,13 @@ public class PCB {
 
     private Process process;
 
-    PCB(Process process) {
+    public PCB(Process process) {
         this.process = process;
         this.pid = process.getPid();
         this.pcounter = process.getCurrentInstruction();
         this.register = new ArrayList<>();
 
-        register.add("xyz"); // assigned value (same for each PCB)
+        register.add("xyz"); // assigned value (same for each A1.PCB)
         register.add(44213); // assigned value
         register.add('c'); // assigned value
     }

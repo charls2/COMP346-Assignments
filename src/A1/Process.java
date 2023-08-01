@@ -1,3 +1,5 @@
+package A1;
+
 public class Process {
 
     private int pid;
@@ -22,7 +24,7 @@ public class Process {
         this.numInstruct = numInstruct;
         this.ioRequestAtInstruction = ioRequestAtInstruction;
         this.ioDevicesRequested = ioDevicesRequested;
-        readyProcess(); // Process allocated to CPU
+        readyProcess(); // A1.Process allocated to A1.CPU
     }
 
     void readyProcess() {
@@ -37,8 +39,9 @@ public class Process {
     public void execute() {
         this.pcb.setState(STATE.RUNNING);
         // two time units per process
+
         for (int i = 0 ; i < timePerProcess ; i++) {
-            System.out.println("\nTIME UNIT: " + CPU.getTimeUnit());
+            System.out.println("\nTIME UNIT: " + CPU.getTimeUnit() + " *******************");
 
             if (currentInstruction == Integer.parseInt(numInstruct) + 1) {
                 System.out.println("PROCESS ID: " + pcb.getPid() + " FINISHED EXECUTING ALL INSTRUCTIONS");
@@ -51,23 +54,12 @@ public class Process {
             }
 
             checkIO();
-
+            // Student ID <First Name - Last Name>
+            System.out.println("\nA1.PCB #" + getPid());
             System.out.println("PROCESS ID: " + this.pid + ", Current Instruction: " + currentInstruction);
-            System.out.print("READY QUEUE: [");
-            for (PCB p : CPU.readyQueue) {
-                System.out.print("PID: " + p.getPid() + " ");
-            }
-            System.out.println("]");
-            System.out.print("WAIT QUEUE IO1: [");
-            for (PCB p : CPU.IO1.getWaitQueue()) {
-                System.out.print("PID: " + p.getPid() + " ");
-            }
-            System.out.println("]");
-            System.out.print("WAIT QUEUE IO2: [");
-            for (PCB p : CPU.IO2.getWaitQueue()) {
-                System.out.print("PID: " + p.getPid() + " ");
-            }
-            System.out.println("]");
+            System.out.println("A1.Process State: " + this.pcb.getState());
+
+            CPU.print();
 
             CPU.setTimeUnit(CPU.getTimeUnit() + 1);
             pcb.setPcounter(currentInstruction);

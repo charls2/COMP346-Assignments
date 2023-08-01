@@ -1,3 +1,5 @@
+package A1;
+
 public enum STATE {
     NEW,
     RUNNING,
