@@ -49,10 +49,6 @@ public class PCB {
         return process;
     }
 
-    public void executeInstructions() {
-        process.execute();
-    }
-
     public void setPcounter(int currentInstruction) {
         this.pcounter = currentInstruction;
     }

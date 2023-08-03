@@ -14,7 +14,6 @@ public class CPUScheduler {
 
     public CPUScheduler() {}
 
-
     public void init() {
         // Read File & Add processes to ready queue
         Driver.getMyFileReader().readFile();
@@ -23,9 +22,7 @@ public class CPUScheduler {
         for (int i = 1; i <= numCPUs; i++) {
             CPU core = new CPU(i);
             cpus.add(core);
-            System.out.println(core.getKey());
         }
-
 
         FCFS fcfs = new FCFS();
         fcfs.begin();
@@ -34,10 +31,26 @@ public class CPUScheduler {
     public static void displayReadyQueue() {
         System.out.print("Ready Queue: [ ");
         for (PCB p : readyQueue) {
-            System.out.print(p.getPid() + ", ");
+            if (p != null) {
+                System.out.print(p.getPid() + ", ");
+            }
         }
         System.out.println("]");
     }
+
+    public static void displayCPUs() {
+        for (CPU cpu : cpus) {
+            if (cpu.isInUse() && cpu.getPCB() != null) {
+                System.out.println("[CPU #: " + cpu.getKey()
+                        + "] [ <- ProcessID: " + cpu.getPCB().getPid() + "]");
+            } else {
+                System.out.println("[CPU #: " + cpu.getKey()
+                        + "] [ <- ProcessID: N/A]");
+            }
+        }
+    }
+
+    // ****************** GETTERS & SETTERS ********************
 
     public static Queue<PCB> getReadyQueue() {
         return readyQueue;

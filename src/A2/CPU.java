@@ -1,17 +1,14 @@
 package A2;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class CPU {
 
     private int key;
-    private PCB inUse;
-    private boolean running;
+    private PCB occupier;
+    private boolean inUse;
 
     public CPU(int key) {
         this.key = key;
-        this.running = false;
+        this.inUse = false;
     }
 
     public int getKey() {
@@ -19,17 +16,17 @@ public class CPU {
     }
 
     public PCB getPCB() {
-        return inUse;
+        return occupier;
     }
     public void setPCB(PCB pcb) {
-        this.inUse = pcb;
+        this.occupier = pcb;
     }
 
-    public boolean isRunning() {
-        return running;
+    public boolean isInUse() {
+        return inUse;
     }
 
-    public void setRunning(boolean running) {
-        this.running = running;
+    public void setInUse(boolean inUse) {
+        this.inUse = inUse;
     }
 }

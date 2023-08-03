@@ -1,6 +1,6 @@
 package A2;
 
-public class Process implements Comparable<Process> {
+public class Process {
 
     private String pid;
     private int arrivalTime;
@@ -22,28 +22,6 @@ public class Process implements Comparable<Process> {
         if (!io_RequestAtTimes.equals("")) {
             ioRequest = true;
         }
-    }
-
-    public void execute() {
-//        for (int i = arrivalTime ; i <= burstTime ; i++) {
-//            if (CPUScheduler.getTime() == i) {
-//                // begin execution
-//                //checkIO();
-//                System.out.println("Process: " + pid + " [Executing...]");
-//
-//                if (i == burstTime && checkIO()) {
-//                    System.out.println("Process: " + pid + " [Finished Executing]");
-//                    completed = true;
-//                }
-//                CPUScheduler.setTime(CPUScheduler.getTime() + 1);
-//
-//            } else {
-//                // IDLING
-//                System.out.println("System Status: [IDLING...]");
-//                break;
-//            }
-//        }
-
     }
 
     public void checkIO() {
@@ -101,12 +79,11 @@ public class Process implements Comparable<Process> {
         return completed;
     }
 
-    @Override
-    public int compareTo(Process p) {
-        return Integer.compare(this.getArrivalTime(), p.getArrivalTime());
-    }
-
     public PCB getPcb() {
         return pcb;
+    }
+
+    public void setComplete(boolean b) {
+        this.completed = b;
     }
 }
