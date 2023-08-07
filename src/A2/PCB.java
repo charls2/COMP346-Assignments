@@ -9,6 +9,7 @@ public class PCB {
     private STATE state = STATE.NEW;
     private String pid;
     private int pcounter;
+    private int ioCounter;
 
     private ArrayList<Object> register;
 
@@ -18,6 +19,7 @@ public class PCB {
         this.process = process;
         this.pid = process.getPid();
         this.pcounter = 0;
+        this.ioCounter = 0;
         this.register = new ArrayList<>();
 
         register.add("xyz"); // assigned value (same for each A1.PCB)
@@ -51,5 +53,13 @@ public class PCB {
 
     public void setPcounter(int currentInstruction) {
         this.pcounter = currentInstruction;
+    }
+
+    public int getIoCounter() {
+        return ioCounter;
+    }
+
+    public void setIoCounter(int ioCounter) {
+        this.ioCounter = ioCounter;
     }
 }

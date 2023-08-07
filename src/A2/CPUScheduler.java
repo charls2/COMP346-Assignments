@@ -1,5 +1,7 @@
 package A2;
 
+import A1.STATE;
+
 import java.util.*;
 
 public class CPUScheduler {
@@ -12,12 +14,16 @@ public class CPUScheduler {
     private static List<PCB> pcbList = new ArrayList<>();
     private static ArrayList<CPU> cpus;
 
+    static IODevice io;
+
+
     public CPUScheduler() {}
 
     public void init() {
         // Read File & Add processes to ready queue
         Driver.getMyFileReader().readFile();
         cpus = new ArrayList<>();
+        io = new IODevice();
         // Create CPUs and add to ArrayList
         for (int i = 1; i <= numCPUs; i++) {
             CPU core = new CPU(i);
@@ -30,8 +36,20 @@ public class CPUScheduler {
 
     public static void displayReadyQueue() {
         System.out.print("Ready Queue: [ ");
-        for (PCB p : readyQueue) {
-            if (p != null) {
+        for (PCB p : pcbList) {
+            if (p != null /*&& (p.getState().equals(STATE.READY)
+                    || p.getState().equals(STATE.RUNNING))*/) {
+                System.out.print(p.getPid() + ", ");
+            }
+        }
+        System.out.println("]");
+    }
+
+    public static void displayWaitQueue() {
+        System.out.print("Wait Queue: [ ");
+        for (PCB p : io.getWaitQueue()) {
+            if (p != null /*&& (p.getState().equals(STATE.READY)
+                    || p.getState().equals(STATE.RUNNING))*/) {
                 System.out.print(p.getPid() + ", ");
             }
         }
@@ -40,13 +58,22 @@ public class CPUScheduler {
 
     public static void displayCPUs() {
         for (CPU cpu : cpus) {
-            if (cpu.isInUse() && cpu.getPCB() != null) {
+            if (cpu.isOccupied() && cpu.getPCB() != null) {
                 System.out.println("[CPU #: " + cpu.getKey()
-                        + "] [ <- ProcessID: " + cpu.getPCB().getPid() + "]");
+                        + "] [ <- ProcessID: " + cpu.getPCB().getPid()
+                        + "] [Prog-Counter: " + cpu.getPCB().getPcounter() + "]");
             } else {
                 System.out.println("[CPU #: " + cpu.getKey()
                         + "] [ <- ProcessID: N/A]");
             }
+        }
+    }
+
+    public static void clearCPU(CPU cpu) {
+        if (cpu.getPCB() != null
+                && cpu.getPCB().getState().equals(STATE.TERMINATED)) {
+            cpu.setOccupied(false);
+            cpu.setPCB(null);
         }
     }
 

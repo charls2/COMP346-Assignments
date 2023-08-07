@@ -1,5 +1,7 @@
 package A2;
 
+import A1.STATE;
+
 public class Process {
 
     private String pid;
@@ -24,22 +26,23 @@ public class Process {
         }
     }
 
-    public void checkIO() {
-        // Check for IO Request
+    public void checkIO(int time) {
+        if (pcb.getState().equals(STATE.WAITING)) {
+//            pcb.setIoCounter(pcb.getIoCounter()+1);
+            return;
+        }
         if (ioRequest) {
-            // Format IO at Instruction
+
             io_RequestAtTimes = io_RequestAtTimes.replaceAll("\\[|\\]", "");
             String[] split = io_RequestAtTimes.split(",");
-            System.out.println("PROCESS: " + pid + " IOREQUESTATTIMES: " + io_RequestAtTimes);
-            // loop check every number if matches current instruction.
+
             for (int i = 0  ; i < split.length ; i++) {
-                // FCFS
-
-                // SJF
-
-                // RR
+                if (Integer.parseInt(split[i]) + pcb.getProcess().getArrivalTime() == time
+                        && !IODevice.hasDuplicates(CPUScheduler.io.getWaitQueue())) { // io at sys-time
+                    pcb.setState(STATE.WAITING);
+                    break;
+                }
             }
-            // break out of loop
         }
     }
 
@@ -77,6 +80,10 @@ public class Process {
 
     public boolean isCompleted() {
         return completed;
+    }
+
+    public boolean getIORequest() {
+        return ioRequest;
     }
 
     public PCB getPcb() {

@@ -40,6 +40,7 @@ public class MyFileReader {
                         , Integer.parseInt(arrivalTime)
                         , Integer.parseInt(burstTime)
                         , ioStr);
+
                 CPUScheduler.getPCBList().add(process.getPcb());
                 // read next line
                 line = reader.readLine();

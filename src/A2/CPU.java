@@ -4,11 +4,11 @@ public class CPU {
 
     private int key;
     private PCB occupier;
-    private boolean inUse;
+    private boolean occupied;
 
     public CPU(int key) {
         this.key = key;
-        this.inUse = false;
+        this.occupied = false;
     }
 
     public int getKey() {
@@ -22,11 +22,11 @@ public class CPU {
         this.occupier = pcb;
     }
 
-    public boolean isInUse() {
-        return inUse;
+    public boolean isOccupied() {
+        return occupied;
     }
 
-    public void setInUse(boolean inUse) {
-        this.inUse = inUse;
+    public void setOccupied(boolean occupied) {
+        this.occupied = occupied;
     }
 }

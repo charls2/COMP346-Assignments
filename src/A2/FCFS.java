@@ -8,7 +8,7 @@ public class FCFS {
 
     private int time;
     private Queue<PCB> readyQ;
-    private ArrayList<CPU> cpus;
+    private final ArrayList<CPU> cpus;
     private List<PCB> pcbList;
 
     public FCFS() {
@@ -22,101 +22,78 @@ public class FCFS {
 
     public void begin() {
 
-        if (!pcbList.isEmpty()) sortPCBList(pcbList);
-
-        while (!readyQ.isEmpty() || !pcbList.isEmpty()) {
+        do {
+            if (!pcbList.isEmpty()) sortPCBList(pcbList);
 
             System.out.println("\n**** SYSTEM TIME: " + time + " ****");
-            // assign a process to an available CPU Core
+
             for (CPU cpu : CPUScheduler.getCpus()) {
 
-                if (!cpu.isInUse()) {
-                    PCB pcbFromList = null;
-                    if (!pcbList.isEmpty()) {
-                        pcbFromList = pcbList.get(0);
-                    }
-                    if (!pcbList.isEmpty() && time == pcbFromList.getProcess().getArrivalTime()) {
-                        pcbFromList.setState(STATE.READY);
-                        readyQ.add(pcbFromList);
-                        pcbList.remove(0);
-                        sortPCBList(pcbList);
-                    }
-                    PCB current = readyQ.poll();
-                    // current process not running on another cpu*/
+                // assign a process to an available CPU Core
+                if (!cpu.isOccupied()) {
 
-                    // Clear CPUs if process complete
-                    if (cpu.getPCB() != null && cpu.getPCB().getState().equals(STATE.TERMINATED)) {
-                        cpu.setInUse(false);
-                        cpu.setPCB(null);
+                    if (readyQ.isEmpty()) {
+                        for (PCB pcb : pcbList) {
+                            if (pcb.getState().equals(STATE.RUNNING)
+                                    || pcb.getState().equals(STATE.TERMINATED)
+                                    || pcb.getState().equals(STATE.WAITING)) {
+                                continue;
+                            } else {
+
+                                if (pcb.getProcess().getArrivalTime() == time) {
+                                    readyQ.add(pcb);
+                                }
+                            }
+                        }
                     }
 
-                    if (current != null && current.getState().equals(STATE.READY)) {
-                        cpu.setPCB(current);
-                        cpu.setInUse(true);
-                        //pcbList.add(current);
-                        sortPCBList(pcbList);
-                        //readyQ.add(current);
+                    PCB currentProcess = null;
+                    if (!readyQ.isEmpty())
+                        currentProcess = readyQ.poll();
 
-                        if (cpu.getPCB() != null)
-                            execute(cpu);
-                        continue;
-                    }
-                    if (current != null && current.getState().equals(STATE.RUNNING)) {
-                        if (cpu.getPCB() != null)
-                            execute(cpu);
-                        readyQ.add(current);
-                    }
+                    cpu.setPCB(currentProcess);
+                    execute(cpu);
 
+                    CPUScheduler.clearCPU(cpu); // Clear CPUs if process complete
 
                 } else {
                     // if cpu is in use
-                    if (cpu.getPCB() != null
-                            && (cpu.getPCB().getState().equals(STATE.READY)
-                            || cpu.getPCB().getState().equals(STATE.RUNNING))) {
-                        execute(cpu);
-                        readyQ.add(cpu.getPCB());
-                        continue;
-                    }
-
-                    // IO
-                    if (cpu.getPCB() != null && cpu.getPCB().getState().equals(STATE.WAITING)) {
-                        // do the io stuff
-                    }
-
-                    // Clear CPUs if process complete
-                    if (cpu.getPCB() != null && cpu.getPCB().getState().equals(STATE.TERMINATED)) {
-                        cpu.setInUse(false);
-                        cpu.setPCB(null);
-                    }
-
+                    execute(cpu);
+                    CPUScheduler.clearCPU(cpu); // Clear CPUs if process complete
                 }
             }
-
             CPUScheduler.displayReadyQueue();
+            CPUScheduler.displayWaitQueue();
             CPUScheduler.displayCPUs();
 
             tick();
-//            if (time == 20) {
-//                System.exit(0);
-//            }
-        }
-        System.out.println("****** SYSTEM TERMINATING (FCFS ALGORITHM) ******");
+            if (time == 20) return;
+        } while (!readyQ.isEmpty() || !pcbList.isEmpty());
+        System.out.print("\n****** SYSTEM TERMINATING (FCFS ALGORITHM) ******");
     }
 
     public void execute(CPU cpu) {
 //        int arrivalTime = cpu.getPCB().getProcess().getArrivalTime();
 //        int burstTime = cpu.getPCB().getProcess().getBurstTime();
+
         if (cpu.getPCB() == null)
             return;
 
-        int progCounter = cpu.getPCB().getPcounter(); // use this to increment every time
+        // Check if IO at system time
+        cpu.getPCB().getProcess().checkIO(time);
+        if (cpu.getPCB().getState().equals(STATE.WAITING)) {
+//            if (!CPUScheduler.io.getWaitQueue().isEmpty() && !CPUScheduler.io.getWaitQueue().element().equals(cpu.getPCB())) {
+                CPUScheduler.io.getWaitQueue().add(cpu.getPCB());
+//            }
+            CPUScheduler.io.execute();
+            return;
+        }
 
-        // Check if IO
-        
-
+        cpu.getPCB().setState(STATE.RUNNING);
+        cpu.setOccupied(true);
 
         // Check if reached burst
-        if (progCounter == cpu.getPCB().getProcess().getBurstTime()) {
+        if (cpu.getPCB().getPcounter() == cpu.getPCB().getProcess().getBurstTime()) {
             cpu.getPCB().getProcess().setComplete(true);
         }
 
@@ -124,35 +101,34 @@ public class FCFS {
             System.out.println("CPU #: " + cpu.getKey() + " [COMPLETED: "
                     + cpu.getPCB().getPid() + "]");
             cpu.getPCB().setState(STATE.TERMINATED);
+
+            pcbList.remove(cpu.getPCB());
+            cpu.setOccupied(false);
+            cpu.setPCB(null);
             return;
         }
 
-        System.out.println("CPU #: " + cpu.getKey() + " [Currently Executing: "
-                + cpu.getPCB().getPid() + " Prog Counter: " + progCounter + "]");
-        cpu.getPCB().setPcounter(progCounter + 1);
-        cpu.getPCB().setState(STATE.RUNNING);
+        cpu.getPCB().setPcounter(cpu.getPCB().getPcounter() + 1);
     }
 
     public void tick() {
         time++;
     }
 
-    public List<PCB> sortPCBList(List<PCB> pcbList) {
-//        PCB firstPCB = pcbList.get(0);
-//        for (PCB pcb : pcbList) {
-//            if (pcb.getProcess().getArrivalTime() < firstPCB.getProcess().getArrivalTime()) {
-//                firstPCB = pcb;
-//            }
-//        }
-        //pcbList.remove(0);
-//        firstPCB.setState(STATE.READY);
-        //readyQ.add(firstPCB);
+    public void sortPCBList(List<PCB> pcbList) {
         pcbList.sort(Comparator.comparingInt(o -> o.getProcess().getArrivalTime()));
 
-        for (PCB pcb : pcbList) {
-            //pcb.setState(STATE.READY);
-//            System.out.println("ID" + pcb.getPid());
-        }
-        return pcbList;
     }
+
+    public ArrayList<CPU> getCpus() {
+        return cpus;
+    }
+//    private void firstArrived(List<PCB> pcbList, PCB pcbFromList) {
+//        pcbList.remove(pcbFromList);
+//        while (!pcbList.isEmpty() && pcbList.get(0).getProcess().getArrivalTime() <= time) {
+//            PCB arrivedProcess = pcbList.remove(0);
+//            readyQ.add(arrivedProcess);
+//        }
+////        pcbList.add(pcbFromList);
+//    }
 }
