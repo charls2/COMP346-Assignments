@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>A2</OriginalElement>
+  <nodes>
+    <node x="-268.53094483078957" y="302.3894158191749">A2.Driver</node>
+    <node x="-192.23346758535422" y="-171.476329562939">A2.CPUScheduler</node>
+    <node x="283.0375568262165" y="40.49860384444261">A2.Process</node>
+    <node x="-9.212220482427398" y="339.6851343738525">A2.FCFS</node>
+    <node x="271.03617653337625" y="542.7057657495848">A2.PCB</node>
+    <node x="-14.429201825319588" y="545.4159531276446">A2.CPU</node>
+    <node x="57.435039981588815" y="202.19232813836084">A2.MyFileReader</node>
+  </nodes>
+  <notes />
+  <edges />
+  <settings layout="Hierarchic" zoom="0.8" showDependencies="false" x="133.375" y="365.12499999999994" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
