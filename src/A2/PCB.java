@@ -10,6 +10,9 @@ public class PCB {
     private String pid;
     private int pcounter;
     private int ioCounter;
+    private boolean ioComplete = false;
+    private int quantumCount = 1;
+
 
     private ArrayList<Object> register;
 
@@ -21,10 +24,6 @@ public class PCB {
         this.pcounter = 0;
         this.ioCounter = 0;
         this.register = new ArrayList<>();
-
-        register.add("xyz"); // assigned value (same for each A1.PCB)
-        register.add(44213); // assigned value
-        register.add('c'); // assigned value
     }
 
     public STATE getState() {
@@ -61,5 +60,21 @@ public class PCB {
 
     public void setIoCounter(int ioCounter) {
         this.ioCounter = ioCounter;
+    }
+
+    public boolean getIOComplete() {
+        return this.ioComplete;
+    }
+
+    public void setIOComplete(boolean b) {
+        this.ioComplete = b;
+    }
+
+    public int getQuantumCount() {
+        return quantumCount;
+    }
+
+    public void setQuantumCount(int quantumCount) {
+        this.quantumCount = quantumCount;
     }
 }

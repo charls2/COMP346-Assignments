@@ -8,11 +8,12 @@ public class CPUScheduler {
 
     // VARIABLES
     private static int time = 0;
-    private int numCPUs;
-    private int quantum;
+    private static int numCPUs;
+    private static int quantum;
     private static Queue<PCB> readyQueue = new LinkedList<>();
     private static List<PCB> pcbList = new ArrayList<>();
     private static ArrayList<CPU> cpus;
+    private static MathCPU mathCPU;
 
     static IODevice io;
 
@@ -32,11 +33,15 @@ public class CPUScheduler {
 
         FCFS fcfs = new FCFS();
         fcfs.begin();
+//        SJF sjf = new SJF();
+//        sjf.begin();
+//        RR rr = new RR();
+//        rr.begin();
     }
 
     public static void displayReadyQueue() {
         System.out.print("Ready Queue: [ ");
-        for (PCB p : pcbList) {
+        for (PCB p : getPCBList()) {
             if (p != null /*&& (p.getState().equals(STATE.READY)
                     || p.getState().equals(STATE.RUNNING))*/) {
                 System.out.print(p.getPid() + ", ");
@@ -48,8 +53,7 @@ public class CPUScheduler {
     public static void displayWaitQueue() {
         System.out.print("Wait Queue: [ ");
         for (PCB p : io.getWaitQueue()) {
-            if (p != null /*&& (p.getState().equals(STATE.READY)
-                    || p.getState().equals(STATE.RUNNING))*/) {
+            if (p != null && p.getState().equals(STATE.WAITING)) {
                 System.out.print(p.getPid() + ", ");
             }
         }
@@ -58,7 +62,7 @@ public class CPUScheduler {
 
     public static void displayCPUs() {
         for (CPU cpu : cpus) {
-            if (cpu.isOccupied() && cpu.getPCB() != null) {
+            if (cpu.getPCB() != null) {
                 System.out.println("[CPU #: " + cpu.getKey()
                         + "] [ <- ProcessID: " + cpu.getPCB().getPid()
                         + "] [Prog-Counter: " + cpu.getPCB().getPcounter() + "]");
@@ -77,17 +81,28 @@ public class CPUScheduler {
         }
     }
 
+    public static void handleIO(CPU cpu) {
+        if (cpu.getPCB().getIoCounter() == io.getTime()) {
+            cpu.getPCB().setState(STATE.RUNNING);
+            cpu.getPCB().setIOComplete(true);
+            return;
+        }
+        if (cpu.getPCB().getIoCounter() < io.getTime()) {
+            cpu.getPCB().setIoCounter(cpu.getPCB().getIoCounter() + 1);
+        }
+    }
+
     // ****************** GETTERS & SETTERS ********************
 
     public static Queue<PCB> getReadyQueue() {
         return readyQueue;
     }
 
-    public int getQuantum() {
+    public static int getQuantum() {
         return quantum;
     }
 
-    public int getNumCPUs() {
+    public static int getNumCPUs() {
         return numCPUs;
     }
 
@@ -113,5 +128,9 @@ public class CPUScheduler {
 
     public static List<PCB> getPCBList() {
         return pcbList;
+    }
+
+    public static MathCPU getMathCPU() {
+        return mathCPU;
     }
 }

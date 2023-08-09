@@ -2,14 +2,19 @@ package A2;
 
 import A1.STATE;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Process {
 
     private String pid;
     private int arrivalTime;
     private int burstTime;
+    private int execTime;
     private String io_RequestAtTimes;
     private boolean ioRequest = false;
     private boolean completed = false;
+    private ArrayList<String> ioAtTimes = new ArrayList<>();
 
     private PCB pcb;
 
@@ -23,25 +28,40 @@ public class Process {
         // check if IO requested (IOBound or CPUBound)
         if (!io_RequestAtTimes.equals("")) {
             ioRequest = true;
-        }
-    }
-
-    public void checkIO(int time) {
-        if (pcb.getState().equals(STATE.WAITING)) {
-//            pcb.setIoCounter(pcb.getIoCounter()+1);
-            return;
-        }
-        if (ioRequest) {
 
             io_RequestAtTimes = io_RequestAtTimes.replaceAll("\\[|\\]", "");
             String[] split = io_RequestAtTimes.split(",");
 
-            for (int i = 0  ; i < split.length ; i++) {
-                if (Integer.parseInt(split[i]) + pcb.getProcess().getArrivalTime() == time
-                        && !IODevice.hasDuplicates(CPUScheduler.io.getWaitQueue())) { // io at sys-time
-                    pcb.setState(STATE.WAITING);
-                    break;
-                }
+            ioAtTimes.addAll(Arrays.asList(split));
+        }
+    }
+
+    public void checkIO2(int time, CPU cpu) {
+        if (cpu.getPCB().getState().equals(STATE.WAITING)) {
+            return;
+        }
+        for (String io : cpu.getPCB().getProcess().getIoAtTimes()) {
+            if (Integer.parseInt(io) + cpu.getPCB().getProcess().getArrivalTime() == time) { // io at sys-time
+                cpu.getPCB().setState(STATE.WAITING);
+                cpu.getPCB().setIoCounter(0);
+                System.out.println("PROCCESS: " + cpu.getPCB().getPid() + " IO NOW");
+                ioAtTimes.remove(io);
+                break;
+            }
+        }
+    }
+
+    public void checkIO(int time, CPU cpu) {
+        if (cpu.getPCB().getState().equals(STATE.WAITING)) {
+            return;
+        }
+        for (String io : cpu.getPCB().getProcess().getIoAtTimes()) {
+            if (Integer.parseInt(io) + getExecTime() == time) { // io at sys-time
+                cpu.getPCB().setState(STATE.WAITING);
+                cpu.getPCB().setIoCounter(0);
+                System.out.println("PROCCESS: " + cpu.getPCB().getPid() + " IO NOW");
+                ioAtTimes.remove(io);
+                break;
             }
         }
     }
@@ -92,5 +112,17 @@ public class Process {
 
     public void setComplete(boolean b) {
         this.completed = b;
+    }
+
+    public ArrayList<String> getIoAtTimes() {
+        return ioAtTimes;
+    }
+
+    public int getExecTime() {
+        return execTime;
+    }
+
+    public void setExecTime(int execTime) {
+        this.execTime = execTime;
     }
 }
