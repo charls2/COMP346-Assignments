@@ -36,6 +36,11 @@ public class Process {
         }
     }
 
+    public Process(int id) {
+        this.pid = String.valueOf(id);
+        this.pcb = new PCB(this);
+    }
+
     public void checkIO2(int time, CPU cpu) {
         if (cpu.getPCB().getState().equals(STATE.WAITING)) {
             return;

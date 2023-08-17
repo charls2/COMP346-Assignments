@@ -71,7 +71,7 @@ public class RR extends CPUScheduler {
 //            System.exit(0);
 
             tick();
-//            if (time == 25) return;
+            if (time == 25) return;
         } while (!getReadyQueue().isEmpty() || !getPCBList().isEmpty());
 
         System.out.print("\n****** SYSTEM TERMINATING (FCFS ALGORITHM) ******");

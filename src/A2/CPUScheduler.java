@@ -31,10 +31,10 @@ public class CPUScheduler {
             cpus.add(core);
         }
 
-        FCFS fcfs = new FCFS();
-        fcfs.begin();
-//        SJF sjf = new SJF();
-//        sjf.begin();
+//        FCFS fcfs = new FCFS();
+//        fcfs.begin();
+        SJF sjf = new SJF();
+        sjf.begin();
 //        RR rr = new RR();
 //        rr.begin();
     }

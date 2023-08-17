@@ -5,5 +5,8 @@ public enum STATE {
     RUNNING,
     WAITING,
     READY,
-    TERMINATED
+    TERMINATED,
+    // FOR ASSIGNMENT #3
+    FULL,
+    EMPTY
 }
